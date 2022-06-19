@@ -1,34 +1,49 @@
 struct Header {
-	char	magic	[0x08];
+	char	ucm2	[0x08];
 	char	name	[0x10];
 	padding	[0x30];
-	u32		var1;
-	u32		polygons;
-	u32		vertices;
-	u32		tags;
+	u32		num_frames;
+	u32		num_polygons;
+	u32		num_vertices;
+	u32		num_tags;
 	u32		var2;
-};
+} [[static]];
 
 struct Vertex {
 	float	x, y, z, nx, ny, nz, u, v;
+} [[static]];
+
+struct Frame {
+	Vertex	vtx_buf	[header.num_vertices];
 };
 
 struct TagName {
 	char	name	[0x10];
-};
+} [[static]];
 
 struct Tag {
-	float	unknown	[0x10];
+	float	data1	[0x0C];
+	float	x, y, z;
+	float	data2;
+} [[static]];
+
+struct FrameTags {
+	Tag		tags	[header.num_tags];
 };
 
-struct UCM {
-	Header	header;
-	u32		idx_buf	[header.polygons * 3];
-	Vertex	vtx_buf	[header.vertices];
-	TagName	tag_names	[header.tags];
-	Tag		tag_buf		[header.tags];
-};
+Header		header 									@ 0x00;
+u32			indices		[header.num_polygons * 3]	@$;
+Frame		frames		[header.num_frames]			@$;
+TagName		tag_names	[header.num_tags]			@$;
+FrameTags	tags		[header.num_frames]			@$;
+u32			unknown1								@$;
+u32			unknown2								@$;
 
-UCM	ucm @ 0x00;
+// Hitbox not yet documented
+
+
+
+
+
 
 
