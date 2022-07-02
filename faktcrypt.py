@@ -66,10 +66,10 @@ if __name__ == '__main__':
                         help='specify custom key')
     args = parser.parse_args()
 
-    if args.fsc:
-        key = KEY_FSC
-    elif args.vsc:
+    if args.vsc:
         key = KEY_VSC
+    elif args.fsc:
+        key = KEY_FSC
     else:
         key = args.key
 
