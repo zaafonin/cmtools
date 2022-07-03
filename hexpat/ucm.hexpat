@@ -1,7 +1,6 @@
 struct Header {
 	char	ucm2	[0x08];
-	char	name	[0x10];
-	padding	[0x30];
+	char	name	[0x40];
 	u32		num_frames;
 	u32		num_polygons;
 	u32		num_vertices;
@@ -40,6 +39,7 @@ u32			unknown1								@$;
 u32			unknown2								@$;
 
 // Hitbox not yet documented
+
 
 
 
