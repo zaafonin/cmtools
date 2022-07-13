@@ -30,20 +30,21 @@ struct FrameTags {
 	Tag		tags	[header.num_tags];
 };
 
+struct Cylinder {
+	float	data	[0x10];
+};
+
+struct Rect {
+	float	data	[0x3C];
+};
+
 Header		header 									@ 0x00;
 u32			indices		[header.num_polygons * 3]	@$;
 Frame		frames		[header.num_frames]			@$;
 TagName		tag_names	[header.num_tags]			@$;
 FrameTags	tags		[header.num_frames]			@$;
-u32			unknown1								@$;
-u32			unknown2								@$;
-
-// Hitbox not yet documented
-
-
-
-
-
-
-
-
+// Hitbox not fully documented
+u32			num_cylinders							@$;
+u32			num_rects								@$;
+Cylinder	cylinders								@$;
+Rect		rects									@$;
