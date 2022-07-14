@@ -30,13 +30,15 @@ struct FrameTags {
 	Tag		tags	[header.num_tags];
 };
 
-struct Cylinder {
+struct Sphere {
 	float	x, y, z;
 	float	radius;
 };
 
-struct Rect {
-	float	data	[0x3C];
+struct Cuboid {
+	float	x, y, z;
+	float	size_x, size_y, size_z;
+	float	data	[0x09];
 };
 
 Header		header 									@ 0x00;
@@ -45,7 +47,9 @@ Frame		frames		[header.num_frames]			@$;
 TagName		tag_names	[header.num_tags]			@$;
 FrameTags	tags		[header.num_frames]			@$;
 // Hitbox not fully documented
-u32			num_cylinders							@$;
-u32			num_rects								@$;
-Cylinder	cylinders	[num_cylinders]				@$;
-Rect		rects		[num_rects]					@$;
+u32			num_spheres								@$;
+u32			num_cuboids								@$;
+Sphere		spheres		[num_spheres]				@$;
+Cuboid		cuboids		[num_cuboids]				@$;
+
+
