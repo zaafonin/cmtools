@@ -31,7 +31,8 @@ struct FrameTags {
 };
 
 struct Cylinder {
-	float	data	[0x10];
+	float	x, y, z;
+	float	radius;
 };
 
 struct Rect {
@@ -46,5 +47,5 @@ FrameTags	tags		[header.num_frames]			@$;
 // Hitbox not fully documented
 u32			num_cylinders							@$;
 u32			num_rects								@$;
-Cylinder	cylinders								@$;
-Rect		rects									@$;
+Cylinder	cylinders	[num_cylinders]				@$;
+Rect		rects		[num_rects]					@$;
