@@ -5,14 +5,14 @@ import numpy as np
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Decrypt or encrypt a Crazy Machines game directory.')
+        description='Create a .ucm model from Wavefront .obj file.')
     parser.add_argument('obj', type=str,
                         help='source model')
     parser.add_argument('ucm', type=str,
                         help='conversion result')
     parser.add_argument('name', type=str,
                         help='model name')
-    args = parser.parse_args(['data/block_prism.obj', 'data/block_prism.ucm', 'prism'])
+    args = parser.parse_args()
 
     with open(args.obj, 'r') as f:
         lines = f.readlines()

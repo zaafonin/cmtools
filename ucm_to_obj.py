@@ -24,7 +24,7 @@ uv = np.dtype([
 ])
 
 parser = argparse.ArgumentParser(
-    description='Decrypt or encrypt FAKT_SCRIPT files.')
+    description='Convert a .ucm to Wavefront .obj file.')
 parser.add_argument('src', type=str,
                     help='source file, .ucm')
 parser.add_argument('dest', type=str,
