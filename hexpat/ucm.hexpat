@@ -38,7 +38,7 @@ struct Sphere {
 struct Cuboid {
 	float	x, y, z;
 	float	size_x, size_y, size_z;
-	float	data	[0x09];
+	float	rotation_matrix	[0x09];
 };
 
 Header		header 									@ 0x00;
@@ -46,10 +46,7 @@ u32			indices		[header.num_polygons * 3]	@$;
 Frame		frames		[header.num_frames]			@$;
 TagName		tag_names	[header.num_tags]			@$;
 FrameTags	tags		[header.num_frames]			@$;
-// Hitbox not fully documented
 u32			num_spheres								@$;
 u32			num_cuboids								@$;
 Sphere		spheres		[num_spheres]				@$;
 Cuboid		cuboids		[num_cuboids]				@$;
-
-

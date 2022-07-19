@@ -5,7 +5,8 @@ from pathlib import Path
 from faktcrypt import crypt
 
 
-KEY_FSC = '930%&g/2ANUBIS=!s?p$'
+KEY_FSC_1 = '930%&g/2ANUBIS=!s?p$'
+KEY_FSC_2 = '1234ghji45%3245?)(2!'
 KEY_VSC = 'tz023416'
 no_crypt = (
     'scripts/elements/flipcounternumber.fsc',
@@ -47,7 +48,7 @@ if __name__ == '__main__':
                 crypt(
                     args.encrypt,
                     p.read_bytes(),
-                    KEY_FSC
+                    KEY_FSC_1
                     )
                 )
         print("Copying" if str(fsc_path) in no_crypt else (("En" if args.encrypt else "De") + "crypting"),
