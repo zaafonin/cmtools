@@ -58,20 +58,6 @@ if __name__ == '__main__':
         b'\x00' * 8,
         indices.tobytes(),
         vertices.tobytes(),
-        b'\x01\x00\x00\x00',
-        b'\x00' * 4,
-        b'\xC4\x73\x1A\x33',
-        b'\x00' * 4,
-        b'\x9A\x99\x19\x3E',
-        b'\x9A\x99\x19\x3E',
-        b'\xCD\xCC\x4C\x3E',
-        b'\x00\x00\x80\x3F',
-        b'\x00' * 4 * 3,
-        b'\x00\x00\x80\x3F',
-        b'\x2E\xBD\x3B\xB3',
-        b'\x00' * 4,
-        b'\x2E\xBD\x3B\xB3',
-        b'\x00\x00\x80\x3F',
     ))
     with open(args.ucm, 'wb') as f:
         f.write(final)
