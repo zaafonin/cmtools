@@ -4,6 +4,9 @@ from multiprocessing.sharedctypes import Value
 import numpy as np
 
 
+# decimals to round coordinates to
+r = 5
+
 tri = np.dtype([
     ('v1', '<i4'),
     ('v2', '<i4'),
@@ -38,52 +41,57 @@ with open(args.src, 'rb') as f_src:
     print(
         f'Frames:\t{num_frames}\n'
         f'Tris:\t{num_tris}\n'
-        f'Verts:\t{num_verts}\n'
+        f'vtx_buf:\t{num_verts}\n'
         f'Tags:\t{num_tags}\n'
     )
     idx_buf = np.fromfile(f_src,
                           count=num_tris,
                           dtype=tri)
-    frames = []
-    ddframes = []
-    ddframes_ids = []
+    vtx_buf = np.fromfile(f_src,
+                        count=num_verts,
+                        dtype=vertex)
+    v_dd, vn_dd, vt_dd = [], [], []
+    idx_buf_dd = []
 
-    for i in range(num_frames):
-        f_dd = []
-        f_dd_table = []
-        verts = np.fromfile(f_src,
-                            count=num_verts,
-                            dtype=vertex)
-        for i, v in enumerate(verts):
+    for tri in idx_buf:
+        i_dd = []
+        for i in range(3):
+            x, y, z, nx, ny, nz, tx, ty = vtx_buf[tri[i]]
+            v = (round(x, 4), round(y, 4), round(z, 4))
+            vn = (round(nx, 4), round(ny, 4), round(nz, 4))
+            vt = (round(tx, 4), round(ty, 4))
+            # print(v, vn, vt)
             try:
-                ddframes_ids.append(ddframes.index((v['x'], v['y'], v['z'])))
-            except ValueError:
-                f_dd_table.append(i)
-                f_dd.append((v['x'], v['y'], v['z']))
-        frames.append(verts)
+                i_v = v_dd.index(v)
+            except:
+                i_v = len(v_dd)
+                v_dd.append(v)
 
-    try:
-        tags = [f_src.read(0x16).split(b'\x00')[0].decode()
-                for i in range(num_tags)]
-        print(f'Tag names: \n{tags}\n')
-    except Exception as e:
-        # TODO: Exception handling
-        print(e)
+            try:
+                i_vt = vt_dd.index(vt)
+            except:
+                i_vt = len(vt_dd)
+                vt_dd.append(vt)
+
+            try:
+                i_vn = vn_dd.index(vn)
+            except:
+                i_vn = len(vn_dd)
+                vn_dd.append(vn)
+            i_dd.append((i_v, i_vt, i_vn))
+        idx_buf_dd.append(i_dd)
 
 with open(args.dest, 'w') as f_dest:
-    for i, vtx_buf in enumerate(frames):
-        if len(frames) > 1:
-            f_dest.write(f"o {model_name}.{i + 1}\n")
-        else:
-            f_dest.write(f"o {model_name}\n")
+    f_dest.write(f"o {model_name}\n")
 
-        for v in vtx_buf:
-            f_dest.write(f"v {v[0]} {v[1]} {v[2]}\n")
-        for v in vtx_buf:
-            f_dest.write(f"vt {v['u']} {v['v'] * -1}\n")
-        for v in vtx_buf:
-            f_dest.write(f"vn {v['nx']} {v['ny']} {v['nz']}\n")
-        for i in idx_buf:
-            f_dest.write(
-                f"f {i['v1'] + 1}/{i['v1'] + 1}/{i['v1'] + 1} {i['v2'] + 1}/{i['v2'] + 1}/{i['v2'] + 1} {i['v3'] + 1}/{i['v3'] + 1}/{i['v3'] + 1}\n")
+    for v in v_dd:
+        f_dest.write(f"v {v[0]} {v[1]} {v[2]}\n")
+    for v in vt_dd:
+        f_dest.write(f"vt {v[0]} {v[1] * -1}\n")
+    for v in vn_dd:
+        f_dest.write(f"vn {v[0]} {v[1]} {v[2]}\n")
+    for i in idx_buf_dd:
+        print(i)
+        f_dest.write(
+            f"f {i[0][0] + 1}/{i[0][1] + 1}/{i[0][2] + 1} {i[1][0] + 1}/{i[1][1] + 1}/{i[1][2] + 1} {i[2][0] + 1}/{i[2][1] + 1}/{i[2][2] + 1}\n")
 print(f'Complete!')

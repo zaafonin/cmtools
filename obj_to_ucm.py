@@ -28,7 +28,9 @@ if __name__ == '__main__':
         if line.startswith('v '):
             vs = np.vstack([vs, np.asarray(line.split()[1:], dtype=np.float32)])
         elif line.startswith('vt '):
-            vts = np.vstack([vts, np.asarray(line.split()[1:], dtype=np.float32)])
+            uv = np.asarray(line.split()[1:], dtype=np.float32)
+            uv[1] *= -1
+            vts = np.vstack([vts, uv])
         elif line.startswith('vn '):
             vns = np.vstack([vns, np.asarray(line.split()[1:], dtype=np.float32)])
         elif line.startswith('f '):
