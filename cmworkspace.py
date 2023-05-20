@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+'''cmworkspace.py
+
+Script for converting a game ./data directory into a workspace (editable
+unencrypted scripts that can be batch encrypted back for the game to use)
+'''
+
 import argparse
 from pathlib import Path
 
@@ -9,11 +15,9 @@ KEY_FSC_1 = '930%&g/2ANUBIS=!s?p$'
 KEY_FSC_2 = '1234ghji45%3245?)(2!'
 KEY_VSC = 'tz023416'
 no_crypt = (
-    'scripts/elements/flipcounternumber.fsc',
-    'scripts/elements/flipcounternumber_r.fsc',
-    'scripts/elements/flipcounternumber_small.fsc',
-    'scripts/config/labs.vsc',
-)
+    'scripts/elements/_menu_pipes.fsc',
+    'scripts/config/labs.vsc'
+) # TODO: Implement no_crypt for other game versions or abolish it altogether 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -41,7 +45,7 @@ if __name__ == '__main__':
         fsc_path = p.relative_to(path_src)
         result_path = Path(path_dest / fsc_path)
         result_path.parent.mkdir(parents=True, exist_ok=True)
-        if str(fsc_path) in no_crypt:
+        if str(fsc_path.as_posix()) in no_crypt:
             result_path.write_bytes(p.read_bytes())
         else:
             result_path.write_bytes(
@@ -51,7 +55,7 @@ if __name__ == '__main__':
                     KEY_FSC_1
                     )
                 )
-        print("Copying" if str(fsc_path) in no_crypt else (("En" if args.encrypt else "De") + "crypting"),
+        print("Copying" if str(fsc_path.as_posix()) in no_crypt else (("En" if args.encrypt else "De") + "crypting"),
             fsc_path, '->', result_path)
 
     print('\nProcessing vsc...\n')
@@ -60,7 +64,7 @@ if __name__ == '__main__':
         vsc_path = p.relative_to(path_src)
         result_path = Path(path_dest / vsc_path)
         result_path.parent.mkdir(parents=True, exist_ok=True)
-        if str(vsc_path) in no_crypt:
+        if str(vsc_path.as_posix()) in no_crypt:
             result_path.write_bytes(p.read_bytes())
         else:
             result_path.write_bytes(
@@ -70,7 +74,7 @@ if __name__ == '__main__':
                     KEY_VSC
                     )
                 )
-        print("Copying" if str(vsc_path) in no_crypt else (("En" if args.encrypt else "De") + "crypting"),
+        print("Copying" if str(vsc_path.as_posix()) in no_crypt else (("En" if args.encrypt else "De") + "crypting"),
             vsc_path, '->', result_path)
     
     print('\nProcessing shd...\n')

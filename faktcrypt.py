@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+'''faktcrypt.py
+
+Implementation of the algorithm found in CFaktCrypt and used for encryption of
+of .fsc and .vsc files. Can be used standalone to encrypt/decrypt a file.
+'''
 import argparse
 import numpy as np
 
