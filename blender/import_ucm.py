@@ -129,7 +129,7 @@ def create_mesh_objects(parsed_ucm_data, frame_collections):
         face_indices = [tuple(trindex[0] for trindex in tri) for tri in dd_tris]
         mesh_data.from_pydata(dd_xyzs, [], face_indices)
         
-        mesh_data.use_auto_smooth = True
+        # mesh_data.use_auto_smooth = True
         
         normals = [(0, 0, 0) for l in mesh_data.loops]
         
