@@ -1,5 +1,3 @@
-import pdb; pdb.set_trace()
-
 bl_info = {
     "name": "UCM Exporter",
     "author": "Zakhar Afonin",
@@ -56,36 +54,19 @@ def gather_data_from_collection(collection):
                             uv = uv_layer[loop_index].uv if uv_layer else (0, 0)
                             
                             # Combine xyz, normal, and uv into a single tuple
-                            vertex_data = (vertex.co.x, vertex.co.y, vertex.co.z, normal.x, normal.y, normal.z, uv[0], uv[1])
+                            vertex_data = (vertex.co.x, vertex.co.y, vertex.co.z, normal.x, normal.y, normal.z, uv[0], -uv[1])
                             data['vertex_buffers'][frame_index].append(vertex_data)
                     
-                    index_buffer = [i for i in range(len(data['vertex_buffers'][frame_index]))]
-                    data['index_buffer'] = [index_buffer[i:i+3] for i in range(0, len(index_buffer), 3)]
-                    
-                    '''if data['vertex_buffers']:
-                        # Use the first frame's vertex buffer as the basis for unique vertices
-                        first_frame_vertices = data['vertex_buffers'][0]
-                        unique_vertices = list(set(first_frame_vertices))
-                        unique_vertex_map = {vertex: index for index, vertex in enumerate(unique_vertices)}
-
-                        # Create an index buffer for the first frame based on the unique vertex map
-                        index_buffer = [unique_vertex_map[vertex] for vertex in first_frame_vertices]
-                        # Organize the index buffer in groups of three to represent polygons
-                        data['index_buffer'] = [index_buffer[i:i+3] for i in range(0, len(index_buffer), 3)]
-
-                        # For each frame, fill the corresponding buffer with original values indexed by the unique indices
-                        for frame_idx in range(data['num_frames']):
-                            if frame_idx >= len(data['vertex_buffers']):
-                                data['vertex_buffers'].append([])
-                            frame_vertices = data['vertex_buffers'][frame_idx]
-                            frame_buffer = [frame_vertices[index] for index in index_buffer]
-                            data['vertex_buffers'][frame_idx] = frame_buffer'''
+                    # index_buffer = [i for i in range(len(data['vertex_buffers'][frame_index]))]
+                    #data['index_buffer'] = [index_buffer[i:i+3] for i in range(0, len(index_buffer), 3)]
             
             # Extract tags
+            data['tag_position_arrays'].append([])
             for obj in subcollection.objects:
-                if obj.type == 'EMPTY' and obj.empty_display_type == 'PLAIN_AXES':
-                    data['tag_names'].append(obj.name)
-                    data['tag_position_arrays'].append([obj.matrix_world])
+                if obj.type == 'EMPTY' and obj.empty_display_type == 'ARROWS':
+                    if (frame_index == 0):
+                        data['tag_names'].append(obj.name.split(subcollection.name + '_')[-1].split('.')[0])
+                    data['tag_position_arrays'][-1].append(obj.matrix_local)
 
         elif subcollection.name == collection.name + "_hitbox":
             # Hitbox collection
@@ -94,8 +75,25 @@ def gather_data_from_collection(collection):
                     if obj.empty_display_type == 'SPHERE':
                         data['hitbox_spheres'].append((obj.location, obj.empty_display_size))
                     elif obj.empty_display_type == 'CUBE':
-                        data['hitbox_boxes'].append((obj.location, obj.dimensions, obj.rotation_euler.to_matrix().to_3x3()))
-
+                        data['hitbox_boxes'].append((obj.location, obj.scale, obj.rotation_euler.to_matrix().to_3x3()))
+                        
+    # Count unique vertices after processing all frames
+    vertices_zipped = []
+    for vertex in range(len(data['vertex_buffers'][0])):
+        li = []
+        for frame in range(data['num_frames']):
+            li.append(data['vertex_buffers'][frame][vertex])
+        vertices_zipped.append(tuple(li))
+    print(vertices_zipped)
+    vertices_unique = tuple(set(vertices_zipped))
+    print(vertices_unique)
+    vertices_dict = {vertex: vertices_unique.index(vertex) for vertex in vertices_unique}
+    print(vertices_dict)
+    index_buffer = tuple(vertices_dict[vertex] for vertex in vertices_zipped)
+    data['index_buffer'] = [index_buffer[i:i+3] for i in range(0, len(index_buffer), 3)]
+    
+    for frame in range(data['num_frames']):
+        data['vertex_buffers'][frame] = tuple(vertices_unique[i][frame] for i in range(len(vertices_unique)))
 
     return data
 
