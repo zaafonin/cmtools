@@ -50,15 +50,12 @@ def gather_data_from_collection(collection):
                         for loop_index in range(poly.loop_start, poly.loop_start + poly.loop_total):
                             loop = mesh.loops[loop_index]
                             vertex = mesh.vertices[loop.vertex_index]
-                            normal = vertex.normal
+                            normal = loop.normal
                             uv = uv_layer[loop_index].uv if uv_layer else (0, 0)
                             
                             # Combine xyz, normal, and uv into a single tuple
                             vertex_data = (vertex.co.x, vertex.co.y, vertex.co.z, normal.x, normal.y, normal.z, uv[0], -uv[1])
                             data['vertex_buffers'][frame_index].append(vertex_data)
-                    
-                    # index_buffer = [i for i in range(len(data['vertex_buffers'][frame_index]))]
-                    #data['index_buffer'] = [index_buffer[i:i+3] for i in range(0, len(index_buffer), 3)]
             
             # Extract tags
             data['tag_position_arrays'].append([])
